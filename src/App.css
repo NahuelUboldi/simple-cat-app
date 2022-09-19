@@ -1,0 +1,84 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+body {
+  display: grid;
+  place-content: center;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+h1 {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 4rem;
+}
+header,
+main,
+article {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 2rem;
+  max-width: 60rem;
+}
+article {
+  flex-direction: column;
+}
+article {
+  background-color: beige;
+  border: solid 1px blanchedalmond;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+article header {
+  display: flex;
+  flex-direction: column;
+  order: 2;
+}
+.change-gif {
+  background-color: blueviolet;
+  color: white;
+  border: none;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.change-gif:hover {
+  color: black;
+  background-color: aquamarine;
+}
+.change-gif:nth-child(1) {
+  border-start-start-radius: 0.5rem;
+  border-end-start-radius: 0.5rem;
+}
+.change-gif:nth-child(2) {
+  border-end-end-radius: 0.5rem;
+  border-start-end-radius: 0.5rem;
+}
+
+article blockquote {
+  font-size: 1.2rem;
+}
+blockquote p {
+  margin-block: 0px;
+}
+blockquote h3 {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: blueviolet;
+  font-weight: bold;
+  font-size: 3rem;
+  margin-block: 0rem;
+}
+article img {
+  order: 1;
+  max-width: 20rem;
+}
+
+@media (min-width: 640px) {
+  article {
+    flex-direction: row;
+  }
+}

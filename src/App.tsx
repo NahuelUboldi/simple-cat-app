@@ -4,37 +4,41 @@ import './App.css';
 function App() {
   const [catFact, setCatFact] = useState<string>('');
   const [gifs, setGifs] = useState<Array<string>>([]);
+  const [gifIndex, setGifIndex] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchCatFactData = async () => {
-    const response = await fetch('https://catfact.ninja/fact');
-    const data = await response.json();
-    setCatFact(data?.fact || 'cat');
+  const getRandomNum = (n: number) => Math.floor(Math.random() * n);
+
+  const fetchCatFact = () => {
+    fetch('https://catfact.ninja/fact')
+      .then((r) => r.json())
+      .then((r) => setCatFact(r.fact || 'cats are cute'))
+      .catch((err) => console.log(err))
+      .finally(() => console.log({ catFact }));
   };
-
-  const firstThreeWords = catFact.split(' ', 3).join(' ');
-  const fetchGiphyGif = async () => {
-    const response = await fetch(
-      `https://api.giphy.com/v1/gifs/search?api_key=${
-        import.meta.env.VITE_GIPHY_API_KEY
-      }&q=${firstThreeWords}`
-    );
-    const data = await response.json();
-
-    console.log(data);
-    const onlyGifsUrl: Array<string> = [...data.data].map(
-      (g) => g?.images?.original.url
-    );
-
-    setGifs(onlyGifsUrl);
-  };
-
-  // const getRandomNumber = (max: number) => Math.floor(Math.random() * max);
-
   useEffect(() => {
-    fetchCatFactData();
+    fetchCatFact();
   }, []);
+
   useEffect(() => {
-    fetchGiphyGif();
+    const apiKey = import.meta.env.VITE_GIPHY_API_KEY;
+    const firstThreeWords = catFact.split(' ', 3).join(' ');
+    fetch(
+      `https://api.giphy.com/v1/gifs/search?q=${firstThreeWords}&api_key=${apiKey}`
+    )
+      .then((r) => r.json())
+      .then((r) => {
+        const onlyUrls: Array<string> = [...r.data].map(
+          (g) => g.images.original.url
+        );
+        setGifs(onlyUrls);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
+  }, [catFact]);
+
+  useEffect(() => {
+    setGifIndex(getRandomNum(gifs.length));
   }, []);
 
   return (
@@ -43,10 +47,31 @@ function App() {
         <h1>Simple Cats App</h1>
       </header>
       <main>
-        <article>
-          <div className='cat-frase'>{catFact}</div>
-          <img src={gifs[0]} alt='' />
-        </article>
+        {isLoading ? (
+          <article>Loading</article>
+        ) : (
+          <article>
+            <header>
+              <blockquote className='cat-frase'>
+                <h3>FACT: </h3>
+                <p>{catFact}</p>
+              </blockquote>
+              <div>
+                <button
+                  className='change-gif'
+                  onClick={() => setGifIndex(getRandomNum(gifs.length))}
+                >
+                  Change Gif
+                </button>
+
+                <button className='change-gif' onClick={fetchCatFact}>
+                  Change Fact
+                </button>
+              </div>
+            </header>
+            <img src={gifs[gifIndex]} alt='' />
+          </article>
+        )}
       </main>
     </>
   );
